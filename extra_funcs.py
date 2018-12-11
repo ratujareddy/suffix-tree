@@ -53,7 +53,7 @@ class Tree:
 		#return("Tree: {}".format(self.name))
 		return(self.name)
 
-	def add_edge(self, edge_obj):
+	def add_child_edge(self, edge_obj):
 		self.child_edges.append(edge_obj)
 
 
@@ -145,10 +145,10 @@ e4 = Edge("CABX", t, l4)
 
 
 
-t.add_edge(e1)
-t.add_edge(e2)
-t.add_edge(e3)
-t.add_edge(e4)
+t.add_child_edge(e1)
+t.add_child_edge(e2)
+t.add_child_edge(e3)
+t.add_child_edge(e4)
 
 
 ##################
@@ -190,10 +190,10 @@ e4 = Edge("CABX", t, l4)
 
 
 
-t.add_edge(e1)
-t.add_edge(e2)
-t.add_edge(e3)
-t.add_edge(e4)
+t.add_child_edge(e1)
+t.add_child_edge(e2)
+t.add_child_edge(e3)
+t.add_child_edge(e4)
 
 
 
@@ -209,7 +209,13 @@ def print_suffix_tree(suffix_tree):
 #print_suffix_tree(t)
 
 
-ltest = [('F', 6),('B', 7), ('C', 8), ('A', 9), ('B', 10), ('X', 11)]
+ltest = [  ('C', 4), ('A', 5), \
+	('B', 6),('B', 7), ('C', 8), \
+	('A', 9), ('B', 10), ('X', 11)]
+
+
+ltest = [ ('B', 6), ('B', 7), ('C', 8), \
+	('A', 9), ('B', 10), ('X', 11), ('$', 12)]
 
 t = Tree("My new tree")
 l1 = Leaf(12)
@@ -219,8 +225,8 @@ l2 = Leaf(10)
 e2 = Edge(["B", "X"],t,l2)
 
 
-t.add_edge(e1)
-#t.add_edge(e2)
+t.add_child_edge(e1)
+#t.add_child_edge(e2)
 
 
 s_test = ["B", "C", "A", "B", "X"]
@@ -278,6 +284,8 @@ def leaf_to_node(old_leaf, old_edge, new_substr, match_val, cur_time):
 	new_node.add_child_edge(new_child_edge1)
 	new_node.add_child_edge(new_child_edge2)
 
+	print("MY NEW EDGES ARE {}, {}".format(new_child_edge1, new_child_edge2))
+
 	# returning the new edge which is also connected to the new node
 	# and new leaves
 	return(new_edge)
@@ -285,35 +293,60 @@ def leaf_to_node(old_leaf, old_edge, new_substr, match_val, cur_time):
 	
 
 
+def match_edge(substr, cur_time, tree):
+	match = False
+	# cur_time = sub_list_of_strings[s_idx][1]
+	# sublist = sub_list_of_strings[s_idx:]
+	# substr = [i[0] for i in sublist]
+	for edge in tree.child_edges:
+		print("\n")
+		print("Looking at substr {}".format(substr))
+		print("Looking at edge {} which has child {}".format(edge, edge.child))
+		itersect_val = subtract_lists(edge.name, substr)
+		print(itersect_val)
+		if itersect_val:
+			print("found a match!")
+			if edge.child_type == "Node":
+				print("AAAH RECURSING HERE")
+				match_edge(get_outersection(itersect_val, substr),cur_time, edge.child)
+			else:
+				match = True
+				new_edge = leaf_to_node(edge.child, edge, substr, itersect_val, cur_time)
+				edge = new_edge
+	return(tree, match)
+
+
+
 
 
 def build_tree(list_of_strings, tree):
 	#t = Tree("Tree for {}".format(tree_name))
 	match = False
-	for s_idx in range(len(list_of_strings)-1, -1, -1):
+	for s_idx in range(len(list_of_strings)-2, -1, -1):
 		cur_time = list_of_strings[s_idx][1]
 		sublist = list_of_strings[s_idx:]
 		substr = [i[0] for i in sublist]
 		#print(substr, cur_time)
 
-		for edge in tree.child_edges:
-			print("\n")
-			print("Looking at substr {}".format(substr))
-			print("Looking at edge {} which has child {}".format(edge, edge.child))
-			itersect_val = subtract_lists(edge.name, substr)
-			print(itersect_val)
-			if itersect_val:
-				print("found a match!")
-				match = True
-				new_edge = leaf_to_node(edge.child, edge, substr, itersect_val, cur_time)
-				edge = new_edge
-				break
+		tree, match = match_edge(substr,cur_time, tree)
+		# for edge in tree.child_edges:
+		# 	print("\n")
+		# 	print("Looking at substr {}".format(substr))
+		# 	print("Looking at edge {} which has child {}".format(edge, edge.child))
+		# 	itersect_val = subtract_lists(edge.name, substr)
+		# 	print(itersect_val)
+		# 	if itersect_val:
+		# 		print("found a match!")
+		# 		match = True
+		# 		new_edge = leaf_to_node(edge.child, edge, substr, itersect_val, cur_time)
+		# 		edge = new_edge
+				#break
 			#break
 		if not match:
 		# Once it's traversed all the edges
 			new_leaf = Leaf(cur_time)
 			new_edge = Edge(substr, tree, new_leaf)
-			t.add_edge(new_edge)
+			t.add_child_edge(new_edge)
 
 	return(tree)
 			#print(edge, substr)
