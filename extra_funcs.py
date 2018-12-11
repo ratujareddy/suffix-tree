@@ -11,7 +11,6 @@ def subtract_lists(l1, l2):
 	# note: l2 should always be longest
 
 	intersection = []
-	outersection = []
 	for i in range(len(l1)):
 		if l1[i] == l2[i]:
 			intersection = intersection+[l1[i]]
@@ -55,7 +54,7 @@ class Tree:
 		return(self.name)
 
 	def add_edge(self, edge_obj):
-		self.child_edges.append(edge_obj.name)
+		self.child_edges.append(edge_obj)
 
 
 
@@ -95,7 +94,7 @@ class Node:
 		return("Node")
 
 	def add_child_edge(self, child_edge):
-		self.child_edges.append(child_edge.name)
+		self.child_edges.append(child_edge)
 
 
 
@@ -197,6 +196,7 @@ t.add_edge(e3)
 t.add_edge(e4)
 
 
+
 def print_suffix_tree(suffix_tree):
 	for e in suffix_tree.child_edges:
 		print("\n{}{} has edge {}".format("\t"*suffix_tree.depth,suffix_tree, e))
@@ -206,13 +206,14 @@ def print_suffix_tree(suffix_tree):
 			#print("recurisng i hope..")
 			print_suffix_tree(e.child)
 
+#print_suffix_tree(t)
 
 
-ltest = [('F', 6),('B', 7), ('C', 8), ('A', 9), ('B', 10)]
+ltest = [('F', 6),('B', 7), ('C', 8), ('A', 9), ('B', 10), ('X', 11)]
 
 t = Tree("My new tree")
-l1 = Leaf(11)
-e1 = Edge(["X"], t, l1)
+l1 = Leaf(12)
+e1 = Edge(["$"], t, l1)
 
 l2 = Leaf(10)
 e2 = Edge(["B", "X"],t,l2)
@@ -224,11 +225,67 @@ t.add_edge(e1)
 
 s_test = ["B", "C", "A", "B", "X"]
 
-[subtract_lists(x, s_test) for x in t.child_edges]
+#[subtract_lists(x, s_test) for x in t.child_edges]
+
+def get_outersection(l1, l2):
+	# l2 should be longest
+
+	outersection = []
+	for i in range(len(l1)):
+		if l1[i] == l2[i]:
+			outersection = l2[i+1:]
+		else:
+			return(outersection)
+	return(outersection)
+
+osect = get_outersection(['B'], ['B', 'A', 'X'])
 
 
-def leaf_to_node():
-	pass
+
+def leaf_to_node(old_leaf, old_edge, new_substr, match_val, cur_time):
+	# print("sldj22f")
+	# print(old_edge.name)
+	sub_edge_val1 = get_outersection(match_val, old_edge.name)
+	sub_edge_val2 = get_outersection(match_val, new_substr)
+
+
+	new_edge = old_edge
+	new_edge.name = match_val
+	new_depth = old_leaf.depth +1
+
+	#attaching our node to our new edge
+	new_node = Node(new_edge, new_depth)
+	new_edge.child = new_node
+	new_edge.child_type = new_node.obj
+	# print("this is my new node {}".format(new_node))
+	# print(get_outersection(match_val, new_substr))
+
+	# adding leaves to our new edge
+	new_leaf1 = old_leaf
+	new_leaf1.depth = new_depth
+
+	# print("this is my new leaf {}".format(new_leaf1))
+	# print(type(new_leaf1))
+	# print("sldjf")
+	# print(old_edge.name)
+	new_child_edge1 = Edge(sub_edge_val1, \
+		new_node,new_leaf1) 
+
+	new_leaf2 = Leaf(cur_time, new_depth)
+	new_child_edge2 = Edge(get_outersection(match_val, new_substr), \
+		new_node, new_leaf2)
+
+	new_node.add_child_edge(new_child_edge1)
+	new_node.add_child_edge(new_child_edge2)
+
+	# returning the new edge which is also connected to the new node
+	# and new leaves
+	return(new_edge)
+
+	
+
+
+
 
 def build_tree(list_of_strings, tree):
 	#t = Tree("Tree for {}".format(tree_name))
@@ -241,12 +298,15 @@ def build_tree(list_of_strings, tree):
 
 		for edge in tree.child_edges:
 			print("\n")
-			print("Looking at edge {}".format(edge))
 			print("Looking at substr {}".format(substr))
-			print(subtract_lists(edge, substr))
-			if subtract_lists(edge, substr):
+			print("Looking at edge {} which has child {}".format(edge, edge.child))
+			itersect_val = subtract_lists(edge.name, substr)
+			print(itersect_val)
+			if itersect_val:
 				print("found a match!")
 				match = True
+				new_edge = leaf_to_node(edge.child, edge, substr, itersect_val, cur_time)
+				edge = new_edge
 				break
 			#break
 		if not match:
@@ -264,7 +324,7 @@ def build_tree(list_of_strings, tree):
 suffix_tree = build_tree(ltest, t)
 
 
-#print_suffix_tree(t)
+
 
 # for e in t.edges:
 # 	print("{} has edge {}".format(t, e))
