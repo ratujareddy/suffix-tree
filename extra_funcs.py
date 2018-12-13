@@ -25,22 +25,7 @@ test2 = ['a', 'b', 'c', 'd', 'a' ,'b']
 intersect1 = subtract_lists(test1, test2)
 
 
-# Suffix tree has n direct edges, n total edges, n total leaves & n total nodes
 
-# Edge *must* have EXACTLY ONE parent which is either
-	# a root of a tree
-	# a node
-# Edge _can_ have n children which is either
-	# a node
-	# a leaf
-
-# Leaf has ONE parent edge and ONE child edge
-# Leaf also has only ONE direct parent Node
-
-# Node has ONE parent edge
-# Node can have ONE OR MANY child edges 
-
-# Only a root of a tree and nodes can have child edges
 
 class Tree:
 	def __init__(self, tree_name):
@@ -65,12 +50,16 @@ class Edge:
 		self.parent_type = parent.obj
 		self.obj = "Edge"
 		self.child = child
-		self.child_type = child.obj
+		#self.child_type = child.obj
 
 	def __repr__(self):
 		#return("Edge: {}".format(self.name))
 		#return(self.name)
 		return("{}".format(self.name))
+
+	@property
+	def child_type(self):
+		return(self.child.obj)
 
 	# def add_child_leaf(self, leaf):
 	# 	self.child_leaves.append(leaf)
@@ -209,13 +198,13 @@ def print_suffix_tree(suffix_tree):
 #print_suffix_tree(t)
 
 
-ltest = [  ('C', 4), ('A', 5), \
+ltest = [ ('B', 3), ('C', 4), ('A', 5), \
 	('B', 6),('B', 7), ('C', 8), \
 	('A', 9), ('B', 10), ('X', 11)]
 
 
-ltest = [ ('B', 6), ('B', 7), ('C', 8), \
-	('A', 9), ('B', 10), ('X', 11), ('$', 12)]
+# ltest = [ ('B', 6), ('B', 7), ('C', 8), \
+# 	('A', 9), ('B', 10), ('X', 11), ('$', 12)]
 
 t = Tree("My new tree")
 l1 = Leaf(12)
@@ -262,7 +251,7 @@ def leaf_to_node(old_leaf, old_edge, new_substr, match_val, cur_time):
 	#attaching our node to our new edge
 	new_node = Node(new_edge, new_depth)
 	new_edge.child = new_node
-	new_edge.child_type = new_node.obj
+	#new_edge.child_type = new_node.obj
 	# print("this is my new node {}".format(new_node))
 	# print(get_outersection(match_val, new_substr))
 
@@ -322,7 +311,7 @@ def match_edge(substr, cur_time, tree):
 def build_tree(list_of_strings, tree):
 	#t = Tree("Tree for {}".format(tree_name))
 	match = False
-	for s_idx in range(len(list_of_strings)-2, -1, -1):
+	for s_idx in range(len(list_of_strings)-1, -1, -1):
 		cur_time = list_of_strings[s_idx][1]
 		sublist = list_of_strings[s_idx:]
 		substr = [i[0] for i in sublist]
