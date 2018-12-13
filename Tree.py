@@ -33,10 +33,10 @@ class Tree:
 
 	Attributes :
 		- name (str): Name assigned to the tree
-		- child_edges (list of Edge obj):
+		- child_edges (list of Edge objs):
 		 List of immediate child edges to the root of the tree
 		- obj (str): "Tree"  
-		- depth (str): Depth of the tree - always 0
+		- depth (int): Depth of the tree - always 0
 
 	TODO 
 		- add max_depth
@@ -61,11 +61,13 @@ class Tree:
 		self.depth = 0
 
 	def __repr__(self):
-		#return("Tree: {}".format(self.name))
+		'''Returns the name of the tree'''
 		return(self.name)
 
 	def add_child_edge(self, edge_obj):
+		'''Adds a child edge object to a list of child edges'''
 		self.child_edges.append(edge_obj)
+
 
 
 
@@ -87,28 +89,30 @@ class Edge:
 			the pattern in the string. Its leaf denotes
 			the index of the beginning of the pattern 
 			(or the time stamp of a process)
-		-  parent (Tree obj or Node obj): The parent
+		- parent (Tree obj or Node obj): The immediate parent
 			of the edge. Can either be a Tree or a Node
+		- obj (str): "Edge"
+		- child (Node obj or Leaf obj): The immediate child  
+			of the edge. Can either be a Leaf or a Node
+		- child_type (str): The object type of the child 
+		- parent_type (str): The object type of the parent
 
-		TODO
-			- Add assert that parent must be either a 
-			  tree or a node
+	TODO
+		- Add assert that parent must be either a 
+		  tree or a node
+		- Add assert that child must be either a
+		  leaf or a node
 	
-	
-
-
 	'''
 	def __init__(self, val, parent, child):
 		self.name = val
 		self.parent = parent
-		#self.parent_type = parent.obj
 		self.obj = "Edge"
 		self.child = child
-		#self.child_type = child.obj
 
 	def __repr__(self):
-		#return("Edge: {}".format(self.name))
-		#return(self.name)
+		'''Returns a stirng representation of the list
+		of strings contained in the edge'''
 		return("{}".format(self.name))
 
 	@property
@@ -118,3 +122,42 @@ class Edge:
 	@property
 	def parent_type(self):
 		return(self.parent.obj)
+
+
+class Node: 
+	''' A node contains:
+		- Exactly one parent edge
+		- n > 1 child edge(s)
+
+	Attributes:
+		- parent_edge (Edge obj): The immediate 
+			parent edge of the node
+		- child_edges (list of Edge objs): A list
+			of all the immediate child edges of the node
+		- obj (str): "Node"
+		- depth (int): The depth of the node. Always > 1.
+			The depth of the node is equivalent to 
+			the depth of its immediate children. 
+	
+	Note: There is no inherent "value" associated 
+	with a node (yet).
+
+	TODO
+		- Maybe make the "value" a composite of 
+		  the preceding edges??? This would help find 
+		  the full string you are looking for. 
+	'''
+
+	def __init__(self, parent_edge, depth = 1):
+		self.parent_edge = parent_edge
+		self.obj = "Node"
+		self.child_edges = []
+		self.depth = depth
+
+	def __repr__(self):
+		#return("Node of Edge {}".format(self.parent_edge))
+		return("Node")
+
+	def add_child_edge(self, child_edge):
+		'''Adds a child edge to list of child edges'''
+		self.child_edges.append(child_edge)
