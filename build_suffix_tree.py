@@ -60,6 +60,8 @@ def leaf_to_node(old_leaf, old_edge, new_substr, match_val, cur_time):
 	new_node.add_child_edge(new_child_edge1)
 	new_node.add_child_edge(new_child_edge2)
 
+
+
 	print("MY NEW EDGES ARE {}, {}".format(new_child_edge1, new_child_edge2))
 
 	# returning the new edge which is also connected 
@@ -102,6 +104,8 @@ def match_edge(substr, cur_time, tree):
 				match = True
 				new_edge = leaf_to_node(edge.child, edge, substr, itersect_val, cur_time)
 				edge = new_edge
+				edge.child.val = tree.val +  edge.name
+
 	return(tree, match)
 
 
