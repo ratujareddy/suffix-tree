@@ -1,3 +1,6 @@
+from Tree import *
+from utils import *
+
 # These functions are used to build the Suffix Tree
 # Given a list of tuples (str, int)
 
@@ -120,19 +123,21 @@ def build_tree(list_of_strings, tree_name):
 			the list of strings by string matches to find 
 			patterns
 	'''
+	suffix_tree = Tree(tree_name)
 	match = False
 	for s_idx in range(len(list_of_strings)-1, -1, -1):
 		cur_time = list_of_strings[s_idx][1]
 		sublist = list_of_strings[s_idx:]
 		substr = [i[0] for i in sublist]
-		tree, match = match_edge(substr,cur_time, tree)
+		suffix_tree, match = match_edge(substr,cur_time, suffix_tree)
 		if not match:
 		# Once it's traversed all the edges
 			new_leaf = Leaf(cur_time)
-			new_edge = Edge(substr, tree, new_leaf)
-			t.add_child_edge(new_edge)
+			new_edge = Edge(substr, suffix_tree, new_leaf)
+			suffix_tree.add_child_edge(new_edge)
 
-	return(tree)
+	return(suffix_tree)
+
 
 
 def print_suffix_tree(suffix_tree):

@@ -47,7 +47,7 @@ class Edge:
 	def __init__(self, val, parent, child):
 		self.name = val
 		self.parent = parent
-		self.parent_type = parent.obj
+		#self.parent_type = parent.obj
 		self.obj = "Edge"
 		self.child = child
 		#self.child_type = child.obj
@@ -61,6 +61,10 @@ class Edge:
 	def child_type(self):
 		return(self.child.obj)
 
+	@property
+	def parent_type(self):
+		return(self.parent.obj)
+
 	# def add_child_leaf(self, leaf):
 	# 	self.child_leaves.append(leaf)
 	# 	# TODO add assert, must be a leaf
@@ -71,7 +75,7 @@ class Edge:
 	# 	# TODO add assert, must be obj node
 
 
-class Node: 
+class Node(Tree): 
 	def __init__(self, parent_edge, depth = 1):
 		self.parent_edge = parent_edge
 		self.obj = "Node"
@@ -82,8 +86,8 @@ class Node:
 		#return("Node of Edge {}".format(self.parent_edge))
 		return("Node")
 
-	def add_child_edge(self, child_edge):
-		self.child_edges.append(child_edge)
+	# def add_child_edge(self, child_edge):
+	# 	self.child_edges.append(child_edge)
 
 
 
@@ -198,23 +202,23 @@ def print_suffix_tree(suffix_tree):
 #print_suffix_tree(t)
 
 
-ltest = [ ('B', 3), ('C', 4), ('A', 5), \
+ltest = [('X', 2), ('B', 3), ('C', 4), ('A', 5), \
 	('B', 6),('B', 7), ('C', 8), \
-	('A', 9), ('B', 10), ('X', 11)]
+	('A', 9), ('B', 10), ('X', 11), ('$', 12)]
 
 
 # ltest = [ ('B', 6), ('B', 7), ('C', 8), \
 # 	('A', 9), ('B', 10), ('X', 11), ('$', 12)]
 
-t = Tree("My new tree")
-l1 = Leaf(12)
-e1 = Edge(["$"], t, l1)
+# t = Tree("My new tree")
+# l1 = Leaf(12)
+# e1 = Edge(["$"], t, l1)
 
-l2 = Leaf(10)
-e2 = Edge(["B", "X"],t,l2)
+# l2 = Leaf(10)
+# e2 = Edge(["B", "X"],t,l2)
 
 
-t.add_child_edge(e1)
+#t.add_child_edge(e1)
 #t.add_child_edge(e2)
 
 
@@ -308,7 +312,10 @@ def match_edge(substr, cur_time, tree):
 
 
 
-def build_tree(list_of_strings, tree):
+def build_tree(list_of_strings, tree_name):
+	
+	tree = Tree(tree_name)
+
 	#t = Tree("Tree for {}".format(tree_name))
 	match = False
 	for s_idx in range(len(list_of_strings)-1, -1, -1):
@@ -335,7 +342,7 @@ def build_tree(list_of_strings, tree):
 		# Once it's traversed all the edges
 			new_leaf = Leaf(cur_time)
 			new_edge = Edge(substr, tree, new_leaf)
-			t.add_child_edge(new_edge)
+			tree.add_child_edge(new_edge)
 
 	return(tree)
 			#print(edge, substr)
@@ -343,7 +350,7 @@ def build_tree(list_of_strings, tree):
 		#[i[0] for i in a]
 		#print(list_of_strings[s_idx] , s_idx)
 
-suffix_tree = build_tree(ltest, t)
+suffix_tree = build_tree(ltest, "this is my tree")
 
 
 

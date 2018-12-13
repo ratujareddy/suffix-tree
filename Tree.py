@@ -29,9 +29,9 @@ class Tree:
 		- m > 0 Leaves 
 		- p > 0 Nodes
 
-	A tree has no parent edges. 
+	Note: A tree has no parent edges. 
 
-	Attributes :
+	Attributes:
 		- name (str): Name assigned to the tree
 		- child_edges (list of Edge objs):
 		 List of immediate child edges to the root of the tree
@@ -59,6 +59,7 @@ class Tree:
 		self.child_edges = []
 		self.obj = "Tree"
 		self.depth = 0
+		self.val = []
 
 	def __repr__(self):
 		'''Returns the name of the tree'''
@@ -90,7 +91,9 @@ class Edge:
 			the index of the beginning of the pattern 
 			(or the time stamp of a process)
 		- parent (Tree obj or Node obj): The immediate parent
-			of the edge. Can either be a Tree or a Node
+			of the edge. Can either be a Tree or a Node. 
+			Note: Adding a parent also adds the Edge to the 
+			Parent's children. 
 		- obj (str): "Edge"
 		- child (Node obj or Leaf obj): The immediate child  
 			of the edge. Can either be a Leaf or a Node
@@ -124,7 +127,7 @@ class Edge:
 		return(self.parent.obj)
 
 
-class Node: 
+class Node(Tree): 
 	''' A node contains:
 		- Exactly one parent edge
 		- n > 1 child edge(s)
@@ -153,11 +156,24 @@ class Node:
 		self.obj = "Node"
 		self.child_edges = []
 		self.depth = depth
+		self.val = []
 
 	def __repr__(self):
 		#return("Node of Edge {}".format(self.parent_edge))
-		return("Node")
+		return("Node {}".format(self.val))
+		#return("Node")
 
-	def add_child_edge(self, child_edge):
-		'''Adds a child edge to list of child edges'''
-		self.child_edges.append(child_edge)
+
+class Leaf:
+	def __init__(self, val, depth = 0):
+
+
+		self.val = val
+		self.obj = "Leaf"
+		self.depth = depth
+		#self.parent = parent_edge.parent
+		#self.parent_type = parent_edge.parent_type
+
+	def __repr__(self):
+		#return("Leaf: {}".format(self.val))
+		return("{}".format(self.val))
